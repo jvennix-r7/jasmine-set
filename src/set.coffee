@@ -35,6 +35,7 @@ install = (_, jasmine, beforeSuite, afterSuite) ->
     # @return [void]
     set: (name, opts, fn) ->
 
+      # Install callbacks to make sure our global variable is set-up/torn down correctly.
       beforeSuite ->
         id = jasmine?.getEnv()?.currentSpec?.suite?.id
         obj = _.find suites[id], (obj) -> obj.name is name
@@ -60,7 +61,6 @@ install = (_, jasmine, beforeSuite, afterSuite) ->
       # comma, -> so we will support both.
       ret = (fn) ->
         setter = (x) ->
-          console.log("CALLING SETTER!")
           oncePerSuiteWrapper()
           delete context[name]
           context[name] = x
