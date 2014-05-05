@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jvennix-r7/jasmine-set.svg?branch=master)](https://travis-ci.org/jvennix-r7/jasmine-set)
+
 jasmine-set brings rspec's `let` syntax to the [Jasmine](http://jasmine.github.io/) behavior-driven development framework for testing JavaScript code. The `set` global function is provided, which allows the spec writer to define lazy global accessors that can be refined in nested specs. To achieve this behavior, the `Suite.prototype.finish` function from Jasmine is wrapped.
 
 ##### Why not `let`?
