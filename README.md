@@ -4,7 +4,7 @@ jasmine-set brings rspec's `let` syntax to Javascript. The `set` global function
 
 In Ecmascript, `let` is a reserved word that allows for block-level scoping (as opposed to `var`, which is functionally-scoped).
 
-#### Sample Usage
+### Sample Usage
 
     describe 'House', ->
       set('opts')  -> {}
@@ -17,7 +17,7 @@ In Ecmascript, `let` is a reserved word that allows for block-level scoping (as 
 
         it('does not have a door') -> expect(@house).not.toHaveADoor()
 
-#### Dependencies
+### Dependencies
 
 - underscore (~1.6)
 - [jasmine-beforeSuite](https://github.com/jvennix-r7/jasmine-beforeSuite)
