@@ -22,6 +22,7 @@ In Ecmascript, `let` is a reserved word that allows for block-level scoping (as 
 ### Dependencies
 
 - underscore (~1.6)
+- node >= 0.8
 
 ### Building from source
 

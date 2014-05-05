@@ -35,6 +35,7 @@
       "url": "http://en.wikipedia.org/wiki/MIT_License"
     }
   ],
+  "engine": "node >= 0.8.0",
   "scripts": {
     "test": "./jake spec"
   }
