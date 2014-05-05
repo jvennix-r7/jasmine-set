@@ -1,4 +1,4 @@
-jasmine-set brings rspec's `let` syntax to Javascript. The `set` global function is provided, which allows the spec writer to define lazy global accessors that can be refined in nested specs.
+jasmine-set brings rspec's `let` syntax to Javascript. The `set` global function is provided, which allows the spec writer to define lazy global accessors that can be refined in nested specs. To achieve this behavior, the `Suite.prototype.finish` function from Jasmine is wrapped.
 
 ##### Why not `let`?
 
@@ -6,21 +6,16 @@ In Ecmascript, `let` is a reserved word that allows for block-level scoping (as 
 
 #### Sample Usage
 
-    class Foo
-      constructor: (opts) ->
-        _.extend @, opts
+    describe 'House', ->
+      set('opts')  -> {}
+      set('house') -> House.new(opts)
 
-    describe 'Foo', ->
-      set 'opts', -> {}
-      set 'foo', -> new Foo(opts)
+      it('has a door') -> expect(@house).toHaveADoor()
 
-      it 'is passed an empty hash', -> expect(opts).toBeEmpty()
+      describe('with no doors') ->
+        set('opts') -> { doors: 0 }
 
-      describe 'when bar is 1', ->
-        set 'opts', -> { bar: 1 }
-
-        it 'is passed a hash with a bar key', -> expect(opts.bar).toBeDefined()
-        it 'creates a Foo with the bar behavior', -> expect(foo.bar).toEqual(1)
+        it('does not have a door') -> expect(@house).not.toHaveADoor()
 
 #### Dependencies
 

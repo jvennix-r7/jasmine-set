@@ -24,4 +24,4 @@ task 'build', ->
   comments = _.filter(source.split("\n\n")[0].split("\n"), (line) -> line.match(/^#.*$/))
   header = _.map(comments, (comment) -> comment.replace(/^#/, '//')).join("\n")
   fs.writeFileSync(DIST_PATH, header+"\n\n"+js)
-  console.log("Compiled successfully. Saved in jasmine-beforeSuite.js")
+  console.log("Compiled successfully. Saved in #{DIST_PATH}")
