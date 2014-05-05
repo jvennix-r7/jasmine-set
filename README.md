@@ -20,7 +20,6 @@ In Ecmascript, `let` is a reserved word that allows for block-level scoping (as 
 ### Dependencies
 
 - underscore (~1.6)
-- [jasmine-beforeSuite](https://github.com/jvennix-r7/jasmine-beforeSuite)
 
 ### Building from source
 
