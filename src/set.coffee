@@ -1,5 +1,5 @@
 #
-# jasmine-set - 0.1.6
+# jasmine-set - 0.1.7
 #
 # A plugin for the Jasmine behavior-driven Javascript testing framework that
 # adds a `set` global function. It is inspired by rspec's very nice `let` syntax.
@@ -36,15 +36,20 @@ install = (_, jasmine, beforeSuite, afterSuite) ->
     set: (name, opts, fn) ->
 
       # Install callbacks to make sure our global variable is set-up/torn down correctly.
-      beforeSuite ->
-        id = jasmine?.getEnv()?.currentSpec?.suite?.id
-        obj = _.find suites[id], (obj) -> obj.name is name
-        return unless obj?
-        namespaceStack[name] ||= []
-        namespaceStack[name].push obj
-        obj?.fn?()
+      beforeEach ->
+        suite = jasmine?.getEnv()?.currentSpec?.suite
+        definitions = []
+        while suite?
+          def = _.find suites[suite.id], (obj) -> obj.name is name
+          definitions.unshift(def) if def?
+          suite = suite.parentSuite
 
-      afterSuite ->
+        namespaceStack[name] ||= []
+        _.each definitions, (def) ->
+          namespaceStack[name].push(def) unless _.contains(namespaceStack[name], def)
+          def.fn()
+
+      afterEach ->
         delete context[name]
         namespaceStack[name]?.pop()
         _.last(namespaceStack[name])?.fn?()
@@ -73,7 +78,7 @@ install = (_, jasmine, beforeSuite, afterSuite) ->
             cachedId = null
             cachedResult = null
             oncePerSuiteWrapper = ->
-              id = jasmine?.getEnv()?.currentSpec?.suite?.id || globalPatches.__autoIncrement++
+              id = jasmine?.getEnv()?.currentSpec?.id || globalPatches.__autoIncrement++
               if id != cachedId
                 cachedResult = fn()
                 cachedId = id

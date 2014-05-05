@@ -1,5 +1,5 @@
 //
-// jasmine-set - 0.1.6
+// jasmine-set - 0.1.7
 //
 // A plugin for the Jasmine behavior-driven Javascript testing framework that
 // adds a `set` global function. It is inspired by rspec's very nice `let` syntax.
@@ -26,20 +26,28 @@
     globalPatches = {
       set: function(name, opts, fn) {
         var ret;
-        beforeSuite(function() {
-          var id, obj, _ref, _ref1, _ref2;
-          id = jasmine != null ? (_ref = jasmine.getEnv()) != null ? (_ref1 = _ref.currentSpec) != null ? (_ref2 = _ref1.suite) != null ? _ref2.id : void 0 : void 0 : void 0 : void 0;
-          obj = _.find(suites[id], function(obj) {
-            return obj.name === name;
-          });
-          if (obj == null) {
-            return;
+        beforeEach(function() {
+          var def, definitions, suite, _ref, _ref1;
+          suite = jasmine != null ? (_ref = jasmine.getEnv()) != null ? (_ref1 = _ref.currentSpec) != null ? _ref1.suite : void 0 : void 0 : void 0;
+          definitions = [];
+          while (suite != null) {
+            def = _.find(suites[suite.id], function(obj) {
+              return obj.name === name;
+            });
+            if (def != null) {
+              definitions.unshift(def);
+            }
+            suite = suite.parentSuite;
           }
           namespaceStack[name] || (namespaceStack[name] = []);
-          namespaceStack[name].push(obj);
-          return obj != null ? typeof obj.fn === "function" ? obj.fn() : void 0 : void 0;
+          return _.each(definitions, function(def) {
+            if (!_.contains(namespaceStack[name], def)) {
+              namespaceStack[name].push(def);
+            }
+            return def.fn();
+          });
         });
-        afterSuite(function() {
+        afterEach(function() {
           var _ref, _ref1;
           delete context[name];
           if ((_ref = namespaceStack[name]) != null) {
@@ -71,8 +79,8 @@
               cachedId = null;
               cachedResult = null;
               oncePerSuiteWrapper = function() {
-                var id, _ref, _ref1, _ref2;
-                id = (jasmine != null ? (_ref = jasmine.getEnv()) != null ? (_ref1 = _ref.currentSpec) != null ? (_ref2 = _ref1.suite) != null ? _ref2.id : void 0 : void 0 : void 0 : void 0) || globalPatches.__autoIncrement++;
+                var id, _ref, _ref1;
+                id = (jasmine != null ? (_ref = jasmine.getEnv()) != null ? (_ref1 = _ref.currentSpec) != null ? _ref1.id : void 0 : void 0 : void 0) || globalPatches.__autoIncrement++;
                 if (id !== cachedId) {
                   cachedResult = fn();
                   cachedId = id;

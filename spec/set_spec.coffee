@@ -54,3 +54,10 @@ describe 'jasmine-set plugin', ->
       `b = 6`
 
     _.times 3, -> it 'sets b to 6', -> expect(b).toEqual(6)
+
+describe 'jasmine-set plugin with a set (a=1)', ->
+  set 'a', -> 1
+
+  describe 'with no immediate sub-specs, just a sub-context', ->
+
+    _.times 3, -> it 'sets a to 1', -> expect(a).toEqual(1)

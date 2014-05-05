@@ -1,6 +1,6 @@
 {
   "name": "jasmine-set",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Adds rspec-style let function to Jasmine",
   "homepage": "https://github.com/jvennix-r7/jasmine-set",
   "author": {
