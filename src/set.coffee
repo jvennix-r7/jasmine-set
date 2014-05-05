@@ -28,24 +28,6 @@ install = (_, jasmine) ->
 
   globalPatches =
 
-    # # Patch describe so, that, I, don't, have, to, write, code, like, -> @.
-    # describe: _.wrap(@describe, (it, description, suite) ->
-    #   if suite
-    #     it.call(@, description, suite)
-    #   else # we are passing spec in as a function argument
-    #     (suite) =>
-    #       it.call(@, description, suite)
-    # )
-
-    # # Patch it so, that, I, don't, have, to, write, code, like, -> @.
-    # it: _.wrap(@it, (it, description, spec) ->
-    #   if spec
-    #     it.call(@, description, spec)
-    #   else # we are passing spec in as a function argument
-    #     (spec) =>
-    #       it.call(@, description, spec)
-    # )
-
     # set enables a Suite-refinable storage mechanism.
     # @param name [String] the name of the var you are defining
     # @param opts [Object] the options hash (optional)

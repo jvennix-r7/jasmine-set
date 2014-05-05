@@ -33,4 +33,4 @@ describe 'jasmine-set plugin', ->
 
   describe 'the next suite, which does not set a', ->
 
-    it 'does not set a', -> expect(-> a).toThrow()
+    it 'does not set a', -> expect(typeof a).toEqual("undefined")
