@@ -12,12 +12,12 @@ In Ecmascript, `let` is a reserved word that allows for block-level scoping (as 
       set 'opts',  -> {}
       set 'house', -> new House(opts)
 
-      it 'has a door', -> expect(@house).toHaveADoor()
+      it 'has a door', -> expect(house).toHaveADoor()
 
       describe 'with no doors', ->
         set 'opts', -> { doors: 0 }
 
-        it 'does not have a door', -> expect(@house).not.toHaveADoor()
+        it 'does not have a door', -> expect(house).not.toHaveADoor()
 
 ### Dependencies
 
