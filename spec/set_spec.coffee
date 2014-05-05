@@ -30,3 +30,7 @@ describe 'jasmine-set plugin', ->
     set 'a', -> 3
 
     it 'sets a to 3', -> expect(a).toEqual(3)
+
+  describe 'the next suite, which does not set a', ->
+
+    it 'does not set a', -> expect(-> a).toThrow()

@@ -101,7 +101,8 @@ install = (_, jasmine) ->
   finish = jasmine.Suite.prototype.finish
   jasmine.Suite.prototype.finish = (cb) ->
     _.each suites[@id], (obj) ->
-      namespaceStack[obj.name]?.pop()
+      delete context[obj.name]
+      namespaceStack[obj.name]?.pop()      
       _.last(namespaceStack[obj.name])?.fn?()
     finish.call @, cb
 
