@@ -1,5 +1,5 @@
 //
-// jasmine-set - 0.1.4
+// jasmine-set - 0.1.5
 //
 // A plugin for the Jasmine behavior-driven Javascript testing framework that
 // adds a `set` global function. It is inspired by rspec's very nice `let` syntax.
@@ -16,7 +16,7 @@
 //
 
 (function() {
-  var context, install, jasmine;
+  var context, install, jasmine, _;
 
   install = function(_, jasmine, beforeSuite, afterSuite) {
     var context, globalPatches, namespaceStack, suites;
@@ -111,10 +111,16 @@
     require("jasmine-before-suite");
   }
 
+  _ = context._ || require("underscore");
+
   if (jasmine == null) {
     console.error("jasmine-set: Jasmine must be required first. Aborting.");
+  } else if (typeof beforeSuite === "undefined" || beforeSuite === null) {
+    console.error("jasmine-set: jasmine-before-suite must be required first. Aborting.");
+  } else if (_ == null) {
+    console.error("jasmine-set: underscore.js must be required first. Aborting.");
   } else {
-    install.call(context, context._ || require("underscore"), jasmine, context.beforeSuite, context.afterSuite);
+    install.call(context, _, jasmine, context.beforeSuite, context.afterSuite);
   }
 
 }).call(this);
