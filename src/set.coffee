@@ -6,7 +6,7 @@
 #
 # Works in both node.js and a browser environment.
 #
-# Requires jasmine.js, jasmine-before-suite, and underscore.js.
+# Requires jasmine.js, and underscore.js.
 #
 # @author Joe Vennix
 # @copyright Rapid7 2014
@@ -15,7 +15,7 @@
 # Released under the MIT License.
 #
 
-install = (_, jasmine, beforeSuite, afterSuite) ->
+install = (_, jasmine) ->
 
   # Contains a map of suite ID -> [{name: var1, installfn: ->}]
   suites = {}
@@ -96,14 +96,11 @@ install = (_, jasmine, beforeSuite, afterSuite) ->
 # Install the added and patched functions in the correct context
 context = (typeof window == "object" && window) || (typeof global == "object" && global) || @
 jasmine = context.jasmine || require("jasmine")
-require("jasmine-before-suite") unless @beforeSuite?
 _ = context._ || require("underscore")
 
 unless jasmine? # the user forgot to include jasmine in the environment
   console.error "jasmine-set: Jasmine must be required first. Aborting."
-else unless beforeSuite?
-  console.error "jasmine-set: jasmine-before-suite must be required first. Aborting."
 else unless _?
   console.error "jasmine-set: underscore.js must be required first. Aborting."
 else
-  install.call(context, _, jasmine, context.beforeSuite, context.afterSuite)
+  install.call(context, _, jasmine)

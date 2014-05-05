@@ -6,7 +6,7 @@
 //
 // Works in both node.js and a browser environment.
 //
-// Requires jasmine.js, jasmine-before-suite, and underscore.js.
+// Requires jasmine.js, and underscore.js.
 //
 // @author Joe Vennix
 // @copyright Rapid7 2014
@@ -18,7 +18,7 @@
 (function() {
   var context, install, jasmine, _;
 
-  install = function(_, jasmine, beforeSuite, afterSuite) {
+  install = function(_, jasmine) {
     var context, globalPatches, namespaceStack, suites;
     suites = {};
     namespaceStack = {};
@@ -115,20 +115,14 @@
 
   jasmine = context.jasmine || require("jasmine");
 
-  if (this.beforeSuite == null) {
-    require("jasmine-before-suite");
-  }
-
   _ = context._ || require("underscore");
 
   if (jasmine == null) {
     console.error("jasmine-set: Jasmine must be required first. Aborting.");
-  } else if (typeof beforeSuite === "undefined" || beforeSuite === null) {
-    console.error("jasmine-set: jasmine-before-suite must be required first. Aborting.");
   } else if (_ == null) {
     console.error("jasmine-set: underscore.js must be required first. Aborting.");
   } else {
-    install.call(context, _, jasmine, context.beforeSuite, context.afterSuite);
+    install.call(context, _, jasmine);
   }
 
 }).call(this);
