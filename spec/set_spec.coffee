@@ -2,8 +2,6 @@ _ = require('underscore')
 require('jasmine-before-suite')
 require('../src/set') unless @set?
 
-context = @
-
 describe 'jasmine-set plugin', ->
 
   describe 'a top-level set (a=1)', ->
