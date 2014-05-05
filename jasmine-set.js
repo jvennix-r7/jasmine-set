@@ -1,12 +1,12 @@
 //
-// jasmine-set - 0.1.5
+// jasmine-set - 0.1.6
 //
 // A plugin for the Jasmine behavior-driven Javascript testing framework that
 // adds a `set` global function. It is inspired by rspec's very nice `let` syntax.
 //
 // Works in both node.js and a browser environment.
 //
-// Requires jasmine.js and underscore.js.
+// Requires jasmine.js, jasmine-before-suite, and underscore.js.
 //
 // @author Joe Vennix
 // @copyright Rapid7 2014
