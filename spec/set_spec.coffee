@@ -1,5 +1,4 @@
 _ = require('underscore')
-require('jasmine-before-suite')
 require('../src/set') unless @set?
 
 describe 'jasmine-set plugin', ->
