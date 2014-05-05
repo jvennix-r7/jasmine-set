@@ -61,9 +61,11 @@ install = (_, jasmine, beforeSuite, afterSuite) ->
       ret = (fn) ->
         setter = (x) ->
           console.log("CALLING SETTER!")
+          oncePerSuiteWrapper()
           delete context[name]
           context[name] = x
 
+        oncePerSuiteWrapper = null
         doit = ->
           if opts.now
             context[name] = fn()

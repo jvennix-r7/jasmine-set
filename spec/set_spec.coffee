@@ -2,6 +2,8 @@ _ = require('underscore')
 require('jasmine-before-suite')
 require('../src/set') unless @set?
 
+context = @
+
 describe 'jasmine-set plugin', ->
 
   describe 'a top-level set (a=1)', ->
@@ -41,14 +43,16 @@ describe 'jasmine-set plugin', ->
 
     set 'a', -> 4
 
-    beforeEach -> a = 5
+    beforeEach ->
+      `a = 5`
 
     _.times 3, -> it 'sets a to 5', -> expect(a).toEqual(5)
 
   describe 'a suite that calls set after beforeEach', ->
 
-    beforeEach -> b = 6
-
     set 'b', -> 7
+
+    beforeEach ->
+      `b = 6`
 
     _.times 3, -> it 'sets b to 6', -> expect(b).toEqual(6)
