@@ -34,5 +34,8 @@
       "name": "MIT License",
       "url": "http://en.wikipedia.org/wiki/MIT_License"
     }
-  ]
+  ],
+  "scripts": {
+    "test": "./jake spec"
+  }
 }
