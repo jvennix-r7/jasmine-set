@@ -15,7 +15,7 @@
 # Released under the MIT License.
 #
 
-install = (_, jasmine, beforeSuite) ->
+install = (_, jasmine, beforeSuite, afterSuite) ->
 
   # Contains a map of suite ID -> [{name: var1, installfn: ->}]
   suites = {}
@@ -26,31 +26,6 @@ install = (_, jasmine, beforeSuite) ->
   # Save a ref to the global context
   context = @
 
-  #
-  # Install the relevant scope before the suite runs
-  #
-  installBeforeSuite = ->
-    currSuite = jasmine?.getEnv()?.currentSuite
-    return if currSuite?.hooked
-    currSuite?.hooked = true
-
-    beforeSuite ->
-      id = jasmine?.getEnv()?.currentSpec?.suite?.id
-      _.each suites[id], (obj) ->
-        namespaceStack[obj.name] ||= []
-        namespaceStack[obj.name].push obj
-        obj.fn()
-
-  #
-  # Wrap Suite.prototype.finish to pop the installed scopes
-  #
-  jasmine.Suite.prototype.finish = _.wrap jasmine.Suite.prototype.finish, (finish, cb) ->
-    _.each suites[@id], (obj) ->
-      delete context[obj.name]
-      namespaceStack[obj.name]?.pop()      
-      _.last(namespaceStack[obj.name])?.fn?()
-    finish.call @, cb
-
   globalPatches =
 
     # set enables a Suite-refinable storage mechanism.
@@ -59,7 +34,19 @@ install = (_, jasmine, beforeSuite) ->
     # @option opts :now [Boolean] evaluate the anon func immediately (false)
     # @return [void]
     set: (name, opts, fn) ->
-      installBeforeSuite()
+
+      beforeSuite ->
+        id = jasmine?.getEnv()?.currentSpec?.suite?.id
+        obj = _.find suites[id], (obj) -> obj.name is name
+        return unless obj?
+        namespaceStack[name] ||= []
+        namespaceStack[name].push obj
+        obj?.fn?()
+
+      afterSuite ->
+        delete context[name]
+        namespaceStack[name]?.pop()
+        _.last(namespaceStack[name])?.fn?()
 
       if _.isFunction(opts)
         fn = opts
@@ -68,10 +55,15 @@ install = (_, jasmine, beforeSuite) ->
       opts ||= {}
       opts.now ?= false
 
+      # we return a function that accepts a function, so we have a nicer
+      # DSL syntax. Of course this clashes with jasmine's, insistence, on,
+      # comma, -> so we will support both.
       ret = (fn) ->
-        # we return a function that accepts a function, so we have a nicer
-        # DSL syntax. Of course this clashes with jasmine's, insistence, on,
-        # comma, -> so we will support both.
+        setter = (x) ->
+          console.log("CALLING SETTER!")
+          delete context[name]
+          context[name] = x
+
         doit = ->
           if opts.now
             context[name] = fn()
@@ -84,8 +76,7 @@ install = (_, jasmine, beforeSuite) ->
                 cachedResult = fn()
                 cachedId = id
               cachedResult
-            console.log "DEFINING PROPERTY #{name}"
-            Object.defineProperty(context, name, get: oncePerSuiteWrapper, configurable: true)
+            Object.defineProperty(context, name, get: oncePerSuiteWrapper, set: setter, configurable: true)
 
         id = jasmine?.getEnv()?.currentSuite?.id
         suites[id] ||= []
@@ -101,6 +92,6 @@ jasmine = context.jasmine || require("jasmine")
 require("jasmine-before-suite") unless @beforeSuite?
 
 unless jasmine? # the user forgot to include jasmine in the environment
-  console.error "jasmine-beforeSuite: Jasmine must be required first. Aborting."
+  console.error "jasmine-set: Jasmine must be required first. Aborting."
 else
-  install.call(context, context._ || require("underscore"), jasmine, beforeSuite)
+  install.call(context, context._ || require("underscore"), jasmine, context.beforeSuite, context.afterSuite)

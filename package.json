@@ -10,7 +10,7 @@
   "main": "jasmine-set.js",
   "dependencies": {
     "underscore": "~1.6",
-    "jasmine-before-suite": "~ 0.1.0"
+    "jasmine-before-suite": "~ 0.1.2"
   },
   "devDependencies": {
     "coffee-script": "~ 1.6.3",
