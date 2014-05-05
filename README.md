@@ -10,7 +10,7 @@ In Ecmascript, `let` is a reserved word that allows for block-level scoping (as 
 
     describe 'House', ->
       set 'opts',  -> {}
-      set 'house', -> House.new(opts)
+      set 'house', -> new House(opts)
 
       it 'has a door', -> expect(@house).toHaveADoor()
 
