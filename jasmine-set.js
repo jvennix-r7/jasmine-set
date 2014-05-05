@@ -19,9 +19,10 @@
   var context, install, jasmine;
 
   install = function(_, jasmine) {
-    var finish, globalPatches, namespaceStack, suites;
+    var context, finish, globalPatches, namespaceStack, suites;
     suites = {};
     namespaceStack = {};
+    context = this;
     globalPatches = {
       set: function(name, opts, fn) {
         var ret;
@@ -38,7 +39,7 @@
           doit = function() {
             var cachedId, cachedResult, oncePerSuiteWrapper;
             if (opts.now) {
-              return window[name] = fn();
+              return context[name] = fn();
             } else {
               cachedId = null;
               cachedResult = null;
@@ -51,7 +52,7 @@
                 }
                 return cachedResult;
               };
-              return Object.defineProperty(window, name, {
+              return Object.defineProperty(context, name, {
                 get: oncePerSuiteWrapper,
                 configurable: true
               });
@@ -86,6 +87,7 @@
     return jasmine.Suite.prototype.finish = function(cb) {
       _.each(suites[this.id], function(obj) {
         var _ref, _ref1;
+        delete context[obj.name];
         if ((_ref = namespaceStack[obj.name]) != null) {
           _ref.pop();
         }
