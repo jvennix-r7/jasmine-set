@@ -1,3 +1,4 @@
+require('jasmine-before-suite')
 require('../src/set') unless @set?
 
 describe 'jasmine-set plugin', ->
@@ -27,6 +28,7 @@ describe 'jasmine-set plugin', ->
 
 
   describe 'the next suite (a=3)', ->
+
     set 'a', -> 3
 
     it 'sets a to 3', -> expect(a).toEqual(3)
@@ -34,3 +36,19 @@ describe 'jasmine-set plugin', ->
   describe 'the next suite, which does not set a', ->
 
     it 'does not set a', -> expect(typeof a).toEqual("undefined")
+
+  describe 'a suite that accesses the a in beforeEach', ->
+
+    set 'a', -> 4
+
+    beforeEach -> a = 5
+
+    it 'sets a to 5', -> expect(a).toEqual(5)
+
+  describe 'a suite that calls set after beforeEach', ->
+
+    beforeEach -> a = 6
+
+    set 'a', -> 7
+
+    it 'sets a to 6', -> expect(a).toEqual(6)

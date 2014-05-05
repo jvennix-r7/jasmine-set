@@ -1,5 +1,5 @@
 #
-# jasmine-beforeSuite - 0.1.0
+# jasmine-set - 0.1.0
 #
 # A plugin for the Jasmine behavior-driven Javascript testing framework that
 # adds a `set` global function. It is inspired by rspec's very nice `let` syntax.
@@ -10,12 +10,12 @@
 #
 # @author Joe Vennix
 # @copyright Rapid7 2014
-# @see https://github.com/jvennix-r7/jasmine-beforeSuite
+# @see https://github.com/jvennix-r7/jasmine-set
 #
 # Released under the MIT License.
 #
 
-install = (_, jasmine) ->
+install = (_, jasmine, beforeSuite) ->
 
   # Contains a map of suite ID -> [{name: var1, installfn: ->}]
   suites = {}
@@ -26,6 +26,31 @@ install = (_, jasmine) ->
   # Save a ref to the global context
   context = @
 
+  #
+  # Install the relevant scope before the suite runs
+  #
+  installBeforeSuite = ->
+    currSuite = jasmine?.getEnv()?.currentSuite
+    return if currSuite?.hooked
+    currSuite?.hooked = true
+
+    beforeSuite ->
+      id = jasmine?.getEnv()?.currentSpec?.suite?.id
+      _.each suites[id], (obj) ->
+        namespaceStack[obj.name] ||= []
+        namespaceStack[obj.name].push obj
+        obj.fn()
+
+  #
+  # Wrap Suite.prototype.finish to pop the installed scopes
+  #
+  jasmine.Suite.prototype.finish = _.wrap jasmine.Suite.prototype.finish, (finish, cb) ->
+    _.each suites[@id], (obj) ->
+      delete context[obj.name]
+      namespaceStack[obj.name]?.pop()      
+      _.last(namespaceStack[obj.name])?.fn?()
+    finish.call @, cb
+
   globalPatches =
 
     # set enables a Suite-refinable storage mechanism.
@@ -33,7 +58,9 @@ install = (_, jasmine) ->
     # @param opts [Object] the options hash (optional)
     # @option opts :now [Boolean] evaluate the anon func immediately (false)
     # @return [void]
-    set: (name, opts, fn) ->    
+    set: (name, opts, fn) ->
+      installBeforeSuite()
+
       if _.isFunction(opts)
         fn = opts
         opts = null
@@ -57,6 +84,7 @@ install = (_, jasmine) ->
                 cachedResult = fn()
                 cachedId = id
               cachedResult
+            console.log "DEFINING PROPERTY #{name}"
             Object.defineProperty(context, name, get: oncePerSuiteWrapper, configurable: true)
 
         id = jasmine?.getEnv()?.currentSuite?.id
@@ -67,32 +95,12 @@ install = (_, jasmine) ->
 
   _.extend @, globalPatches
 
-  #
-  # Install the relevant scope before the suite runs
-  #
-  beforeEach ->
-    id = jasmine?.getEnv()?.currentSpec?.suite?.id
-    _.each suites[id], (obj) ->
-      namespaceStack[obj.name] ||= []
-      namespaceStack[obj.name].push obj
-      obj.fn()
-
-  #
-  # Wrap Suite.prototype.finish to pop the installed scopes
-  #
-  finish = jasmine.Suite.prototype.finish
-  jasmine.Suite.prototype.finish = (cb) ->
-    _.each suites[@id], (obj) ->
-      delete context[obj.name]
-      namespaceStack[obj.name]?.pop()      
-      _.last(namespaceStack[obj.name])?.fn?()
-    finish.call @, cb
-
 # Install the added and patched functions in the correct context
 context = (typeof window == "object" && window) || (typeof global == "object" && global) || @
 jasmine = context.jasmine || require("jasmine")
+require("jasmine-before-suite") unless @beforeSuite?
 
 unless jasmine? # the user forgot to include jasmine in the environment
   console.error "jasmine-beforeSuite: Jasmine must be required first. Aborting."
 else
-  install.call(context, context._ || require("underscore"), jasmine)
+  install.call(context, context._ || require("underscore"), jasmine, beforeSuite)

@@ -1,7 +1,7 @@
 {
   "name": "jasmine-set",
   "version": "0.1.0",
-  "description": "Adds rspec's let to Jasmine",
+  "description": "Adds rspec-style let function to Jasmine",
   "homepage": "https://github.com/jvennix-r7/jasmine-set",
   "author": {
     "name": "Joe Vennix",
@@ -9,7 +9,8 @@
   },
   "main": "jasmine-set.js",
   "dependencies": {
-    "underscore": "~1.6"
+    "underscore": "~1.6",
+    "jasmine-before-suite": "~ 0.1.0"
   },
   "devDependencies": {
     "coffee-script": "~ 1.6.3",
