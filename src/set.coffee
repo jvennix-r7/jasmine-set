@@ -66,7 +66,6 @@ install = (_, jasmine) ->
       # comma, -> so we will support both.
       ret = (fn) ->
         setter = (x) ->
-          oncePerSuiteWrapper()
           delete context[name]
           context[name] = x
 

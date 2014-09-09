@@ -34,7 +34,8 @@ describe 'jasmine-set plugin', ->
 
   describe 'the next suite, which does not set a', ->
 
-    _.times 3, -> it 'does not set a', -> expect(typeof a).toEqual("undefined")
+    it 'does not set a', ->
+      expect(typeof a).toEqual("undefined")
 
   describe 'a suite that accesses the a in beforeEach', ->
 
@@ -93,27 +94,35 @@ describe 'jasmine-set with cross-referencing, reverse sets, that are referenced 
 
 describe 'an outer beforeEach that depends on a nested set call', ->
 
-  beforeEach -> `a+=1`
-
-  describe 'when a is overriden inside a nested suite to depend on a nested var', ->
-
-    set 'b', -> 1
-    set 'a', -> b + 1
-
-    _.times 3, -> it 'sets a to 2', -> expect(a).toEqual(2)
-    _.times 3, -> it 'sets b to 1', -> expect(b).toEqual(1)
-
-
-describe 'an outer beforeEach that depends on a nested set call', ->
+  set 'a', -> 1
+  set 'b', -> 1
 
   beforeEach -> `a+=1`
 
   describe 'when a is overriden inside a nested suite to depend on a nested var', ->
 
-    set 'b', -> 1
+    set 'b', -> 4
     set 'a', -> b + 1
 
-    describe 'within an immediate suite', ->
+    it 'sets a to 5', ->
+      expect(a).toEqual(5)
 
-      _.times 3, -> it 'sets a to 2', -> expect(a).toEqual(2)
-      _.times 3, -> it 'sets b to 1', -> expect(b).toEqual(1)
+    it 'sets b to 4', -> expect(b).toEqual(4)
+
+
+# describe 'an outer beforeEach that depends on a nested set call', ->
+
+#   set 'a', -> 1
+#   set 'b', -> 1
+
+#   beforeEach ->
+#     `a+=1`
+
+#   describe 'when a is overriden inside a nested suite to depend on a nested var', ->
+    
+#     set 'a', -> b + 1
+
+#     describe 'within an immediate suite', ->
+
+#       _.times 3, -> it 'sets a to 2', -> expect(a).toEqual(2)
+#       _.times 3, -> it 'sets b to 1', -> expect(b).toEqual(1)
