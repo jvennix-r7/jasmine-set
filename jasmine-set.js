@@ -66,7 +66,6 @@
         ret = function(fn) {
           var doit, id, oncePerSuiteWrapper, setter, _ref, _ref1;
           setter = function(x) {
-            oncePerSuiteWrapper();
             delete context[name];
             return context[name] = x;
           };
